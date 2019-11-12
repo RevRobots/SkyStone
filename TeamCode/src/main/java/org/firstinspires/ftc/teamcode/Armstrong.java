@@ -113,7 +113,7 @@ public class Armstrong
 
 
     }
-    
+
     void unclamp ()
     {
 
