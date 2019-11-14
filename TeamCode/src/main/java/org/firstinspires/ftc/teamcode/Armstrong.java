@@ -20,6 +20,7 @@ public class Armstrong
     int rSpd = 2;
 
     double aSpd = 0.5;
+    //Variables
 
     public Armstrong (Gamepad g1, Gamepad g2, DcMotor t, DcMotor l, DcMotor a, Servo c)
     {
@@ -34,6 +35,7 @@ public class Armstrong
         arm = a;
 
         claw = c;
+        //Constructor
 
     }
 

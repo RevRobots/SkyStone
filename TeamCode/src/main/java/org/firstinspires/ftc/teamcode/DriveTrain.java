@@ -30,6 +30,8 @@ public class DriveTrain
         leftBack = lB;
         rightBack = rB;
 
+        //Constructor
+
     }
 
     void teleOpPackage ()
@@ -113,6 +115,7 @@ public class DriveTrain
     {
 
         return this.dSpd;
+        //Return dSpd to main program for telemetry
 
     }
 
@@ -120,6 +123,7 @@ public class DriveTrain
     {
 
         return this.toggle;
+        //Return toggle to main program for telemetry
 
     }
 
