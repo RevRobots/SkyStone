@@ -19,6 +19,8 @@ public class Armstrong
 
     int rSpd = 2;
 
+    double aSpd = 0.5;
+
     public Armstrong (Gamepad g1, Gamepad g2, DcMotor t, DcMotor l, DcMotor a, Servo c)
     {
 
@@ -38,17 +40,17 @@ public class Armstrong
     void teleOpPackage ()
     {
 
-        turret.setPower(gamepad2.right_stick_x/rSpd);
+        turret.setPower(-gamepad2.right_stick_x/rSpd);
 
         if (gamepad2.a)
         {
 
-            rSpd = 1;
+            rSpd = 2;
 
         } else if (gamepad2.b)
         {
 
-            rSpd = 2;
+            rSpd = 4;
 
         }
 
@@ -57,12 +59,29 @@ public class Armstrong
         if (gamepad2.right_trigger != 0)
         {
 
-            arm.setPower(1);
+            arm.setPower(aSpd);
 
         } else if (gamepad2.left_trigger != 0)
         {
 
-            arm.setPower(-1);
+            arm.setPower(-aSpd);
+
+        } else
+        {
+
+            arm.setPower(0.1);
+
+        }
+
+        if (gamepad2.x)
+        {
+
+            aSpd = 0.5;
+
+        } else if (gamepad2.y)
+        {
+
+            aSpd = 0.25;
 
         }
 
@@ -75,6 +94,13 @@ public class Armstrong
         {
 
             claw.setPosition(0);
+
+        }
+
+        if (gamepad2.dpad_left)
+        {
+
+
 
         }
 

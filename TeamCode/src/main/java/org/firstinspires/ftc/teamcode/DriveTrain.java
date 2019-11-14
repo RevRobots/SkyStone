@@ -15,10 +15,15 @@ public class DriveTrain
     DcMotor rightBack;
 
     double dSpd = 2;
+
+    boolean toggle = false;
     //Variables
 
     public DriveTrain (Gamepad g1, Gamepad g2, DcMotor lF, DcMotor rF, DcMotor lB, DcMotor rB)
     {
+
+        gamepad1 = g1;
+        gamepad2 = g2;
 
         leftFront = lF;
         rightFront = rF;
@@ -27,55 +32,13 @@ public class DriveTrain
 
     }
 
-    void forward ()
-    {
-
-
-
-    }
-
-    void backwards ()
-    {
-
-
-
-    }
-
-    void right ()
-    {
-
-
-
-    }
-
-    void left ()
-    {
-
-
-
-    }
-
-    void tRight ()
-    {
-
-
-
-    }
-
-    void tLeft ()
-    {
-
-
-
-    }
-
     void teleOpPackage ()
     {
 
-        leftFront.setPower(((-(gamepad1.left_stick_y))+(gamepad1.left_stick_x)+(gamepad1.right_stick_x))/dSpd);
-        rightFront.setPower(((gamepad1.left_stick_y)-(gamepad1.left_stick_x)+(gamepad1.right_stick_x))/dSpd);
-        leftBack.setPower(((-(gamepad1.left_stick_y))-(gamepad1.left_stick_x)+(gamepad1.right_stick_x))/dSpd);
-        rightBack.setPower(((gamepad1.left_stick_y)+(gamepad1.left_stick_x)+(gamepad1.right_stick_x))/dSpd);
+        leftFront.setPower(((gamepad1.left_stick_y)-(gamepad1.left_stick_x)-(gamepad1.right_stick_x))/dSpd);
+        rightFront.setPower(((-(gamepad1.left_stick_y))-(gamepad1.left_stick_x)-(gamepad1.right_stick_x))/dSpd);
+        leftBack.setPower(((gamepad1.left_stick_y)+(gamepad1.left_stick_x)-(gamepad1.right_stick_x))/dSpd);
+        rightBack.setPower(((-(gamepad1.left_stick_y))+(gamepad1.left_stick_x)-(gamepad1.right_stick_x))/dSpd);
         //Directions
 
         if (gamepad1.y)
@@ -124,7 +87,7 @@ public class DriveTrain
 
         }
 
-        if (gamepad1.left_bumper)
+        if (gamepad1.left_bumper && toggle==false)
         {
 
             leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -133,7 +96,7 @@ public class DriveTrain
             rightBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             //Brake
 
-        } else
+        } else if (gamepad1.left_bumper && toggle==true)
         {
 
             leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
@@ -143,6 +106,266 @@ public class DriveTrain
             //Un-Brake
 
         }
+
+    }
+
+    double getDSpd ()
+    {
+
+        return this.dSpd;
+
+    }
+
+    boolean getToggle ()
+    {
+
+        return this.toggle;
+
+    }
+
+    void forward (double spd, int tic)
+    {
+
+        leftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        leftBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        leftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        leftBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        leftFront.setTargetPosition(tic);
+        rightFront.setTargetPosition(tic);
+        leftBack.setTargetPosition(tic);
+        rightBack.setTargetPosition(tic);
+
+        leftFront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        rightFront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        leftBack.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        rightBack.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        leftFront.setPower(spd);
+        rightFront.setPower(spd);
+        leftBack.setPower(spd);
+        rightBack.setPower(spd);
+
+        while (leftFront.isBusy() && rightFront.isBusy() && leftBack.isBusy() && rightBack.isBusy());
+
+        kill();
+
+        leftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        leftBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        //Encoder Forward
+
+    }
+
+    void backwards (double spd, int tic)
+    {
+
+        leftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        leftBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        leftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        leftBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        leftFront.setTargetPosition(-tic);
+        rightFront.setTargetPosition(-tic);
+        leftBack.setTargetPosition(-tic);
+        rightBack.setTargetPosition(-tic);
+
+        leftFront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        rightFront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        leftBack.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        rightBack.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        leftFront.setPower(spd);
+        rightFront.setPower(spd);
+        leftBack.setPower(spd);
+        rightBack.setPower(spd);
+
+        while (leftFront.isBusy() && rightFront.isBusy() && leftBack.isBusy() && rightBack.isBusy());
+
+        kill();
+
+        leftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        leftBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        //Encoder Backwards
+
+    }
+
+    void right (double spd, int tic)
+    {
+
+        leftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        leftBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        leftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        leftBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        leftFront.setTargetPosition(tic);
+        rightFront.setTargetPosition(-tic);
+        leftBack.setTargetPosition(-tic);
+        rightBack.setTargetPosition(tic);
+
+        leftFront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        rightFront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        leftBack.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        rightBack.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        leftFront.setPower(spd);
+        rightFront.setPower(spd);
+        leftBack.setPower(spd);
+        rightBack.setPower(spd);
+
+        while (leftFront.isBusy() && rightFront.isBusy() && leftBack.isBusy() && rightBack.isBusy());
+
+        kill();
+
+        leftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        leftBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        //Encoder Strafe Right
+
+    }
+
+    void left (double spd, int tic)
+    {
+
+        leftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        leftBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        leftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        leftBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        leftFront.setTargetPosition(-tic);
+        rightFront.setTargetPosition(tic);
+        leftBack.setTargetPosition(tic);
+        rightBack.setTargetPosition(-tic);
+
+        leftFront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        rightFront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        leftBack.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        rightBack.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        leftFront.setPower(spd);
+        rightFront.setPower(spd);
+        leftBack.setPower(spd);
+        rightBack.setPower(spd);
+
+        while (leftFront.isBusy() && rightFront.isBusy() && leftBack.isBusy() && rightBack.isBusy());
+
+        kill();
+
+        leftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        leftBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        //Encoder Strafe Left
+
+    }
+
+    void tRight (double spd, int tic)
+    {
+
+        leftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        leftBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        leftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        leftBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        leftFront.setTargetPosition(tic);
+        rightFront.setTargetPosition(-tic);
+        leftBack.setTargetPosition(tic);
+        rightBack.setTargetPosition(-tic);
+
+        leftFront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        rightFront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        leftBack.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        rightBack.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        leftFront.setPower(spd);
+        rightFront.setPower(spd);
+        leftBack.setPower(spd);
+        rightBack.setPower(spd);
+
+        while (leftFront.isBusy() && rightFront.isBusy() && leftBack.isBusy() && rightBack.isBusy());
+
+        kill();
+
+        leftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        leftBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        //Encoder Turn Right
+
+    }
+
+    void tLeft (double spd, int tic)
+    {
+
+        leftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        leftBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        leftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        leftBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        leftFront.setTargetPosition(-tic);
+        rightFront.setTargetPosition(tic);
+        leftBack.setTargetPosition(-tic);
+        rightBack.setTargetPosition(tic);
+
+        leftFront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        rightFront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        leftBack.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        rightBack.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        leftFront.setPower(spd);
+        rightFront.setPower(spd);
+        leftBack.setPower(spd);
+        rightBack.setPower(spd);
+
+        while (leftFront.isBusy() && rightFront.isBusy() && leftBack.isBusy() && rightBack.isBusy());
+
+        kill();
+
+        leftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        leftBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        //Encoder Turn Left
 
     }
 
