@@ -27,7 +27,49 @@ public class DriveTrain
 
     }
 
-    void TeleOpPackage ()
+    void forward ()
+    {
+
+
+
+    }
+
+    void backwards ()
+    {
+
+
+
+    }
+
+    void right ()
+    {
+
+
+
+    }
+
+    void left ()
+    {
+
+
+
+    }
+
+    void tRight ()
+    {
+
+
+
+    }
+
+    void tLeft ()
+    {
+
+
+
+    }
+
+    void teleOpPackage ()
     {
 
         leftFront.setPower(((-(gamepad1.left_stick_y))+(gamepad1.left_stick_x)+(gamepad1.right_stick_x))/dSpd);
@@ -104,45 +146,13 @@ public class DriveTrain
 
     }
 
-    void forward ()
+    void kill ()
     {
 
-
-
-    }
-
-    void backwards ()
-    {
-
-
-
-    }
-
-    void right ()
-    {
-
-
-
-    }
-
-    void left ()
-    {
-
-
-
-    }
-
-    void tRight ()
-    {
-
-
-
-    }
-
-    void tLeft ()
-    {
-
-
+        leftFront.setPower(0);
+        rightFront.setPower(0);
+        leftBack.setPower(0);
+        rightBack.setPower(0);
 
     }
 
