@@ -20,6 +20,8 @@ public class Armstrong
     int rSpd = 2;
 
     double aSpd = 0.5;
+
+    String clawPos = "Closed";
     //Variables
 
     public Armstrong (Gamepad g1, Gamepad g2, DcMotor t, DcMotor l, DcMotor a, Servo c)
@@ -90,77 +92,167 @@ public class Armstrong
         if (gamepad2.right_bumper)
         {
 
-            claw.setPosition(1);
+            claw.setPosition(0);
 
         } else if (gamepad2.left_bumper)
         {
 
-            claw.setPosition(0);
+            claw.setPosition(1);
 
         }
 
-        if (gamepad2.dpad_left)
+    }
+
+    int getRSpd ()
+    {
+
+        return this.rSpd;
+
+    }
+
+    double getASpd ()
+    {
+
+        return this.aSpd;
+
+    }
+
+    String getClawPos ()
+    {
+
+        if (claw.getPosition() == 0)
         {
 
+            clawPos = "Closed";
 
+        } else if (claw.getPosition() == 1)
+        {
+
+            clawPos = "Open";
 
         }
 
-    }
-
-    void tRight ()
-    {
-
-
+        return this.clawPos;
 
     }
 
-    void tLeft ()
+    void tRight (double spd, int tic)
     {
 
+        turret.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
+        turret.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        turret.setTargetPosition(-tic);
+
+        turret.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        turret.setPower(spd);
+
+        while (turret.isBusy());
+
+        kill();
+
+        turret.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
     }
 
-    void up ()
+    void tLeft (double spd, int tic)
     {
 
+        turret.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
+        turret.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        turret.setTargetPosition(tic);
+
+        turret.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        turret.setPower(spd);
+
+        while (turret.isBusy());
+
+        kill();
+
+        turret.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
     }
 
-    void down ()
+    void up (double spd, int time) throws InterruptedException
     {
 
+        lift.setPower(-spd);
 
+        Thread.sleep(time);
+
+        kill();
 
     }
 
-    void rUp ()
+    void down (double spd, int time) throws InterruptedException
     {
 
+        lift.setPower(spd);
 
+        Thread.sleep(time);
+
+        kill();
 
     }
 
-    void rDown ()
+    void rUp (double spd, int tic)
     {
 
+        arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
+        arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        arm.setTargetPosition(tic);
+
+        arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        arm.setPower(spd);
+
+        while (arm.isBusy());
+
+        kill();
+
+        arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+    }
+
+    void rDown (double spd, int tic)
+    {
+
+        arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        arm.setTargetPosition(-tic);
+
+        arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        arm.setPower(spd);
+
+        while (arm.isBusy());
+
+        kill();
+
+        arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
     }
 
     void clamp ()
     {
 
-
+        claw.setPosition(0);
 
     }
 
     void unclamp ()
     {
 
-
+        claw.setPosition(1);
 
     }
 

@@ -87,8 +87,14 @@ public class Drive extends OpMode
         dT.teleOpPackage();
         a.teleOpPackage();
 
-        telemetry.addData("Drive Speed: ", dT.getDSpd());
+        telemetry.addData("Drive Mode: ", dT.getDSpd());
         telemetry.addData("Brake: ", dT.getToggle());
+
+        telemetry.addData("Turret Mode: ", a.getRSpd());
+
+        telemetry.addData("Arm Speed: ", a.getASpd());
+
+        telemetry.addData("Claw Position: ", a.getClawPos());
 
         telemetry.update();
 
