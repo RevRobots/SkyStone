@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -30,10 +31,10 @@ public class Drive extends OpMode
 
     Servo claw;
 
+    BNO055IMU imu;
+
     DriveTrain dT;
     Armstrong a;
-
-    double aTick;
 
     @Override
     public void init()
@@ -52,8 +53,10 @@ public class Drive extends OpMode
 
         claw = hardwareMap.servo.get("claw");
 
+        imu = hardwareMap.get(BNO055IMU.class, "imu");
+
         dT = new DriveTrain(gamepad1, gamepad2 ,leftFront, rightFront, leftBack, rightBack);
-        a = new Armstrong(gamepad1, gamepad2, turret, lift, arm, claw);
+        a = new Armstrong(gamepad1, gamepad2, turret, lift, arm, claw, imu);
 
         leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);

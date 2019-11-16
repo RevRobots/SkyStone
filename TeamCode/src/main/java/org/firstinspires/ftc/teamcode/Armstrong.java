@@ -1,13 +1,24 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Gamepad;
+import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
+
+import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
 public class Armstrong
 {
     Gamepad gamepad1;
     Gamepad gamepad2;
+
+    HardwareMap map;
 
     DcMotor turret;
 
@@ -17,14 +28,21 @@ public class Armstrong
 
     Servo claw;
 
+    BNO055IMU imu;
+
+    Orientation angles;
+    Acceleration gravity;
+
     int rSpd = 2;
+
+    float tDeg;
 
     double aSpd = 0.5;
 
     String clawPos = "Closed";
     //Variables
 
-    public Armstrong (Gamepad g1, Gamepad g2, DcMotor t, DcMotor l, DcMotor a, Servo c)
+    public Armstrong (Gamepad g1, Gamepad g2, DcMotor t, DcMotor l, DcMotor a, Servo c, BNO055IMU i)
     {
 
         gamepad1 = g1;
@@ -37,6 +55,21 @@ public class Armstrong
         arm = a;
 
         claw = c;
+
+        imu = i;
+
+        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+        parameters.angleUnit           = BNO055IMU.AngleUnit.DEGREES;
+        parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+        parameters.calibrationDataFile = "BNO055IMUCalibration.json"; // see the calibration sample opmode
+        parameters.loggingEnabled      = true;
+        parameters.loggingTag          = "IMU";
+        parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
+        imu.initialize(parameters);
+
+        angles   = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+
+        tDeg = angles.firstAngle;
         //Constructor
 
     }
@@ -178,6 +211,69 @@ public class Armstrong
 
     }
 
+    void aTRight (double  spd, int angle)
+    {
+
+        tDeg = angles.firstAngle;
+
+        while (tDeg > -angle - 5 || tDeg < -angle + 5)
+        {
+
+            tDeg = angles.firstAngle;
+
+            turret.setPower(-spd);
+
+        }
+
+        kill();
+
+    }
+
+    void aTLeft ()
+    {
+
+
+
+    }
+
+    void aTurn (double spd, int angle, double range)
+    {
+
+        tDeg = angles.firstAngle;
+
+        if (angle > tDeg)
+        {
+
+            while (tDeg < angle - range || tDeg > angle + range)
+            {
+
+                turret.setPower(-spd);
+
+                tDeg = angles.firstAngle;
+
+            }
+
+            tDeg = angles.firstAngle;
+
+        } else if (angle < tDeg)
+        {
+
+            while (tDeg < angle - range || tDeg > angle + range)
+            {
+
+                turret.setPower(spd);
+
+                tDeg = angles.firstAngle;
+
+            }
+
+            kill();
+
+        }
+
+
+    }
+
     void up (double spd, int time) throws InterruptedException
     {
 
@@ -265,7 +361,7 @@ public class Armstrong
 
         arm.setPower(0);
 
-        claw.setPosition(0);
+        claw.setPosition(1);
 
     }
 
