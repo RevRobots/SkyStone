@@ -99,7 +99,33 @@ public class RedAuto extends LinearOpMode
 
         waitForStart();
 
+        a.up(0.5, 500);
 
+        a.tRight(.25, 600);
+
+        a.rUp(0.5, 400);
+
+        //a.down(0.5, 1000);
+
+        dT.right(0.25, 100);
+
+        dT.forward(.25, 1600);
+
+        /*dT.backwards(0.25, 300);
+
+        a.down(0.25, 1500);
+
+        a.rUp(0.5, 50);
+
+        a.rDown(0.5, 450);
+
+        arm.setPower(-1);
+
+        //dT.tRight(0.125, 100);
+
+        dT.left(.25, 1200);
+
+        dT.tRight(.25, 500);*/
 
         Thread.sleep(30000);
 

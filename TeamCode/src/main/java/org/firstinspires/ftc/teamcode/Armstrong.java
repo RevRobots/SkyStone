@@ -359,7 +359,7 @@ public class Armstrong
 
         lift.setPower(0);
 
-        arm.setPower(0);
+        arm.setPower(0.2);
 
         claw.setPosition(1);
 

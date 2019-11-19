@@ -19,7 +19,7 @@ import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
 
 import java.util.List;
 
-@Autonomous (name = "Red Autonomous", group = "Auto")
+@Autonomous (name = "Blue Autonomous", group = "Auto")
 
 public class BlueAuto extends LinearOpMode
 {
@@ -99,7 +99,17 @@ public class BlueAuto extends LinearOpMode
 
         waitForStart();
 
+        a.up(0.5, 500);
 
+        a.tRight(.25, 600);
+
+        a.rUp(0.5, 400);
+
+
+
+        dT.left(0.25, 100);
+
+        dT.forward(.25, 1600);
 
         Thread.sleep(30000);
 
