@@ -4,6 +4,7 @@ import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -19,9 +20,9 @@ import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
 
 import java.util.List;
 
-@Autonomous (name = "Blue Autonomous", group = "Auto")
+@Autonomous (name = "Red Full Autonomous", group = "Auto")
 
-public class BlueAuto extends LinearOpMode
+public class RedFull extends LinearOpMode
 {
 
     HardwareMap map;
@@ -31,13 +32,17 @@ public class BlueAuto extends LinearOpMode
     DcMotor leftBack;
     DcMotor rightBack;
 
+    Servo leftFoundation;
+    Servo rightFoundation;
+
     DcMotor turret;
 
     DcMotor lift;
 
     DcMotor arm;
 
-    Servo claw;
+    CRServo leftClaw;
+    CRServo rightClaw;
 
     BNO055IMU imu;
 
@@ -64,19 +69,23 @@ public class BlueAuto extends LinearOpMode
         leftBack = hardwareMap.dcMotor.get("leftBack");
         rightBack = hardwareMap.dcMotor.get("rightBack");
 
+        leftFoundation = hardwareMap.servo.get("leftFoundation");
+        rightFoundation = hardwareMap.servo.get("rightFoundation");
+
         turret = hardwareMap.dcMotor.get("turret");
 
         lift = hardwareMap.dcMotor.get("lift");
 
         arm = hardwareMap.dcMotor.get("arm");
 
-        claw = hardwareMap.servo.get("claw");
+        leftClaw = hardwareMap.crservo.get("leftClaw");
+        rightClaw = hardwareMap.crservo.get("rightClaw");
 
         imu = hardwareMap.get(BNO055IMU.class, "imu");
         imu.initialize(parameters);
 
-        dT = new DriveTrain(gamepad1, gamepad2 ,leftFront, rightFront, leftBack, rightBack);
-        a = new Armstrong(gamepad1, gamepad2,  turret, lift, arm, claw, imu);
+        dT = new DriveTrain(gamepad1, gamepad2 ,leftFront, rightFront, leftBack, rightBack, leftFoundation, rightFoundation);
+        a = new Armstrong(gamepad1, gamepad2,  turret, lift, arm, leftClaw, rightClaw, imu);
 
         leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -95,21 +104,67 @@ public class BlueAuto extends LinearOpMode
         arm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         dT.kill();
+        dT.release();
         a.kill();
+
+        telemetry.addData(">", "ReadyForStart");
+
+        telemetry.update();
 
         waitForStart();
 
-        a.up(0.5, 500);
+        a.setLIdol(0);
+        a.setAIdol(0.1);
 
-        a.tRight(.25, 600);
+        a.rUp(0.25, 500);
 
-        a.rUp(0.5, 400);
+        a.tRight(0.5, 950);
 
+        dT.right(0.25, 900);
 
+        a.down(0.5, 750);
+
+        a.rDown(0.25, 300);
+
+        dT.forward(0.25, 500);
+
+        a.unclamp(1, 500);
+
+        dT.right(.25, 325);
+
+        a.setCIdol(1);
+
+        a.clamp(1, 600);
+
+        a.rUp(0.25,250);
+
+        a.tRight(0.25, 950);
+
+        dT.backwards(0.25, 3250);
+
+        a.tLeft(0.25, 950);
+
+        a.rDown(0.25, 100);
+
+        a.unclamp(1, 500);
+
+        a.rUp(0.25, 100);
 
         dT.left(0.25, 100);
 
-        dT.forward(.25, 1600);
+        dT.tLeft(.25, 850);
+
+        dT.backwards(0.25, 200);
+
+        dT.grab();
+
+        dT.forward(0.25, 1500);
+
+        dT.backwards(0.25, 100);
+
+        dT.release();
+
+        dT.right(0.5, 1500);
 
         Thread.sleep(30000);
 

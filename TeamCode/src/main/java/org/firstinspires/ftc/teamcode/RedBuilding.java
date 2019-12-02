@@ -1,21 +1,29 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.Gamepad;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
-@TeleOp (name="Right Hand Man", group="drive")
+import org.firstinspires.ftc.robotcore.external.ClassFactory;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
+import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
+import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
+import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
 
-public class Drive extends OpMode
+import java.util.List;
+
+@Autonomous (name = "Red Building Autonomous", group = "Auto")
+
+public class RedBuilding extends LinearOpMode
 {
-
-    Gamepad g1;
-    Gamepad g2;
 
     HardwareMap map;
 
@@ -38,12 +46,23 @@ public class Drive extends OpMode
 
     BNO055IMU imu;
 
+    Orientation angles;
+    Acceleration gravity;
+
     DriveTrain dT;
     Armstrong a;
 
     @Override
-    public void init()
+    public void runOpMode () throws InterruptedException
     {
+
+        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+        parameters.angleUnit           = BNO055IMU.AngleUnit.DEGREES;
+        parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+        parameters.calibrationDataFile = "BNO055IMUCalibration.json"; // see the calibration sample opmode
+        parameters.loggingEnabled      = true;
+        parameters.loggingTag          = "IMU";
+        parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
 
         leftFront = hardwareMap.dcMotor.get("leftFront");
         rightFront = hardwareMap.dcMotor.get("rightFront");
@@ -63,13 +82,19 @@ public class Drive extends OpMode
         rightClaw = hardwareMap.crservo.get("rightClaw");
 
         imu = hardwareMap.get(BNO055IMU.class, "imu");
+        imu.initialize(parameters);
 
         dT = new DriveTrain(gamepad1, gamepad2 ,leftFront, rightFront, leftBack, rightBack, leftFoundation, rightFoundation);
-        a = new Armstrong(gamepad1, gamepad2, turret, lift, arm, leftClaw, rightClaw, imu);
+        a = new Armstrong(gamepad1, gamepad2,  turret, lift, arm, leftClaw, rightClaw, imu);
 
         leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
+
         rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
         leftBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        leftBack.setDirection(DcMotorSimple.Direction.REVERSE);
+
         rightBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         turret.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -81,42 +106,21 @@ public class Drive extends OpMode
         dT.kill();
         a.kill();
 
-    }
+        waitForStart();
 
-    @Override
-    public void start()
-    {
+        dT.forward(0.25, 1000);
 
-        dT.kill();
-        a.kill();
+        //dT.left(0.5, 1000);
 
-    }
+        //dT.grab();
 
-    @Override
-    public void loop()
-    {
+        //dT.forward(0.5, 1000);
 
-        dT.teleOpPackage();
-        a.teleOpPackage();
+        //dT.release();
 
-        telemetry.addData("Drive Mode: ", dT.getDSpd());
-        telemetry.addData("Brake: ", dT.getToggle());
-        telemetry.addData("Foundation", dT.getFoundation());
+        //dT.right(0.5, 1000);
 
-        telemetry.addData("Turret Mode: ", a.getRSpd());
-
-        telemetry.addData("Arm Speed: ", a.getASpd());
-
-        telemetry.update();
-
-    }
-
-    @Override
-    public void stop()
-    {
-
-        dT.kill();
-        a.kill();
+        Thread.sleep(30000);
 
     }
 

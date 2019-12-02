@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -26,23 +27,27 @@ public class Armstrong
 
     DcMotor arm;
 
-    Servo claw;
+    CRServo leftClaw;
+    CRServo rightClaw;
 
     BNO055IMU imu;
 
     Orientation angles;
     Acceleration gravity;
 
-    int rSpd = 2;
+    int rSpd = 1;
 
     float tDeg;
 
     double aSpd = 0.5;
+    double lIdol = 0;
+    double aIdol = 0;
+    double cIdol = 0;
 
     String clawPos = "Closed";
     //Variables
 
-    public Armstrong (Gamepad g1, Gamepad g2, DcMotor t, DcMotor l, DcMotor a, Servo c, BNO055IMU i)
+    public Armstrong (Gamepad g1, Gamepad g2, DcMotor t, DcMotor l, DcMotor a, CRServo lC, CRServo rC, BNO055IMU i)
     {
 
         gamepad1 = g1;
@@ -54,7 +59,8 @@ public class Armstrong
 
         arm = a;
 
-        claw = c;
+        leftClaw = lC;
+        rightClaw = rC;
 
         imu = i;
 
@@ -82,12 +88,12 @@ public class Armstrong
         if (gamepad2.a)
         {
 
-            rSpd = 2;
+            rSpd = 1;
 
         } else if (gamepad2.b)
         {
 
-            rSpd = 4;
+            rSpd = 2;
 
         }
 
@@ -125,12 +131,20 @@ public class Armstrong
         if (gamepad2.right_bumper)
         {
 
-            claw.setPosition(0);
+            leftClaw.setPower(-1);
+            rightClaw.setPower(1);
 
         } else if (gamepad2.left_bumper)
         {
 
-            claw.setPosition(1);
+            leftClaw.setPower(1);
+            rightClaw.setPower(-1);
+
+        } else
+        {
+
+            leftClaw.setPower(0);
+            rightClaw.setPower(0);
 
         }
 
@@ -147,25 +161,6 @@ public class Armstrong
     {
 
         return this.aSpd;
-
-    }
-
-    String getClawPos ()
-    {
-
-        if (claw.getPosition() == 0)
-        {
-
-            clawPos = "Closed";
-
-        } else if (claw.getPosition() == 1)
-        {
-
-            clawPos = "Open";
-
-        }
-
-        return this.clawPos;
 
     }
 
@@ -314,6 +309,9 @@ public class Armstrong
         kill();
 
         arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        arm.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        kill();
 
     }
 
@@ -338,17 +336,50 @@ public class Armstrong
 
     }
 
-    void clamp ()
+    void clamp (double spd, int time) throws InterruptedException
     {
 
-        claw.setPosition(0);
+        leftClaw.setPower(-spd);
+        rightClaw.setPower(spd);
+
+        Thread.sleep(time);
+
+        leftClaw.setPower(cIdol);
+        rightClaw.setPower(cIdol);
 
     }
 
-    void unclamp ()
+    void unclamp (double spd, int time) throws InterruptedException
     {
 
-        claw.setPosition(1);
+        leftClaw.setPower(spd);
+        rightClaw.setPower(-spd);
+
+        Thread.sleep(time);
+
+        leftClaw.setPower(0);
+        rightClaw.setPower(0);
+
+    }
+
+    void setLIdol (double i)
+    {
+
+        lIdol = i;
+
+    }
+
+    void setAIdol (double i)
+    {
+
+        aIdol = i;
+
+    }
+
+    void setCIdol (double i)
+    {
+
+        cIdol = i;
 
     }
 
@@ -357,11 +388,12 @@ public class Armstrong
 
         turret.setPower(0);
 
-        lift.setPower(0);
+        lift.setPower(lIdol);
 
-        arm.setPower(0.2);
+        arm.setPower(aIdol);
 
-        claw.setPosition(1);
+        leftClaw.setPower(-cIdol);
+        rightClaw.setPower(cIdol);
 
     }
 

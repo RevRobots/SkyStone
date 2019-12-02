@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Gamepad;
+import com.qualcomm.robotcore.hardware.Servo;
 
 public class DriveTrain
 {
@@ -14,12 +15,17 @@ public class DriveTrain
     DcMotor leftBack;
     DcMotor rightBack;
 
+    Servo leftFoundation;
+    Servo rightFoundation;
+
     double dSpd = 2;
 
     boolean toggle = false;
+
+    String foundation;
     //Variables
 
-    public DriveTrain (Gamepad g1, Gamepad g2, DcMotor lF, DcMotor rF, DcMotor lB, DcMotor rB)
+    public DriveTrain (Gamepad g1, Gamepad g2, DcMotor lF, DcMotor rF, DcMotor lB, DcMotor rB, Servo lFo, Servo rFo)
     {
 
         gamepad1 = g1;
@@ -29,6 +35,9 @@ public class DriveTrain
         rightFront = rF;
         leftBack = lB;
         rightBack = rB;
+
+        leftFoundation = lFo;
+        rightFoundation = rFo;
 
         //Constructor
 
@@ -72,20 +81,14 @@ public class DriveTrain
         if (gamepad1.right_trigger != 0)
         {
 
-            leftFront.setPower(1);
-            rightFront.setPower(-1);
-            leftBack.setPower(1);
-            rightBack.setPower(-1);
-            //Straight Forward
+            leftFoundation.setPosition(1);
+            rightFoundation.setPosition(1);
 
-        } else if (gamepad1.left_trigger != 0)
+        } else
         {
 
-            leftFront.setPower(-1);
-            rightFront.setPower(1);
-            leftBack.setPower(-1);
-            rightBack.setPower(1);
-            //Straight Backward
+            leftFoundation.setPosition(0.5);
+            rightFoundation.setPosition(0.4);
 
         }
 
@@ -124,6 +127,25 @@ public class DriveTrain
 
         return this.toggle;
         //Return toggle to main program for telemetry
+
+    }
+
+    String getFoundation ()
+    {
+
+        if (leftFoundation.getPosition() == 0)
+        {
+
+            foundation = "Down";
+
+        } else if (leftFoundation.getPosition() == 0.5)
+        {
+
+            foundation = "Up";
+
+        }
+
+        return this.foundation;
 
     }
 
@@ -373,6 +395,22 @@ public class DriveTrain
 
     }
 
+    void grab ()
+    {
+
+        leftFoundation.setPosition(1);
+        rightFoundation.setPosition(1);
+
+    }
+
+    void release ()
+    {
+
+        leftFoundation.setPosition(0.5);
+        rightFoundation.setPosition(0.4);
+
+    }
+
     void kill ()
     {
 
@@ -380,6 +418,7 @@ public class DriveTrain
         rightFront.setPower(0);
         leftBack.setPower(0);
         rightBack.setPower(0);
+
 
     }
 
