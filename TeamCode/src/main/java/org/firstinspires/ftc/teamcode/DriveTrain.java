@@ -190,6 +190,36 @@ public class DriveTrain
 
     }
 
+    void forwardNoStop (double spd, int tic)
+    {
+
+        leftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        leftBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        leftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        leftBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        leftFront.setTargetPosition(tic);
+        rightFront.setTargetPosition(tic);
+        leftBack.setTargetPosition(tic);
+        rightBack.setTargetPosition(tic);
+
+        leftFront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        rightFront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        leftBack.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        rightBack.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        leftFront.setPower(spd);
+        rightFront.setPower(spd);
+        leftBack.setPower(spd);
+        rightBack.setPower(spd);
+
+    }
+
     void backwards (double spd, int tic)
     {
 
@@ -228,6 +258,36 @@ public class DriveTrain
         rightBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         //Encoder Backwards
+
+    }
+
+    void backwardsNoStop (double spd, int tic)
+    {
+
+        leftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        leftBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        leftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        leftBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        leftFront.setTargetPosition(-tic);
+        rightFront.setTargetPosition(-tic);
+        leftBack.setTargetPosition(-tic);
+        rightBack.setTargetPosition(-tic);
+
+        leftFront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        rightFront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        leftBack.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        rightBack.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        leftFront.setPower(spd);
+        rightFront.setPower(spd);
+        leftBack.setPower(spd);
+        rightBack.setPower(spd);
 
     }
 
@@ -272,6 +332,36 @@ public class DriveTrain
 
     }
 
+    void rightNoStop (double spd, int tic)
+    {
+
+        leftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        leftBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        leftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        leftBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        leftFront.setTargetPosition(tic);
+        rightFront.setTargetPosition(-tic);
+        leftBack.setTargetPosition(-tic);
+        rightBack.setTargetPosition(tic);
+
+        leftFront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        rightFront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        leftBack.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        rightBack.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        leftFront.setPower(spd);
+        rightFront.setPower(spd);
+        leftBack.setPower(spd);
+        rightBack.setPower(spd);
+
+    }
+
     void left (double spd, int tic)
     {
 
@@ -310,6 +400,36 @@ public class DriveTrain
         rightBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         //Encoder Strafe Left
+
+    }
+
+    void leftNoStop (double spd, int tic)
+    {
+
+        leftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        leftBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        leftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        leftBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        leftFront.setTargetPosition(-tic);
+        rightFront.setTargetPosition(tic);
+        leftBack.setTargetPosition(tic);
+        rightBack.setTargetPosition(-tic);
+
+        leftFront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        rightFront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        leftBack.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        rightBack.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        leftFront.setPower(spd);
+        rightFront.setPower(spd);
+        leftBack.setPower(spd);
+        rightBack.setPower(spd);
 
     }
 
@@ -354,6 +474,36 @@ public class DriveTrain
 
     }
 
+    void tRightNoStop (double spd, int tic)
+    {
+
+        leftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        leftBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        leftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        leftBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        leftFront.setTargetPosition(tic);
+        rightFront.setTargetPosition(-tic);
+        leftBack.setTargetPosition(tic);
+        rightBack.setTargetPosition(-tic);
+
+        leftFront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        rightFront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        leftBack.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        rightBack.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        leftFront.setPower(spd);
+        rightFront.setPower(spd);
+        leftBack.setPower(spd);
+        rightBack.setPower(spd);
+
+    }
+
     void tLeft (double spd, int tic)
     {
 
@@ -392,6 +542,36 @@ public class DriveTrain
         rightBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         //Encoder Turn Left
+
+    }
+
+    void tLeftNoStop (double spd, int tic)
+    {
+
+        leftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        leftBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        leftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        leftBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        leftFront.setTargetPosition(-tic);
+        rightFront.setTargetPosition(tic);
+        leftBack.setTargetPosition(-tic);
+        rightBack.setTargetPosition(tic);
+
+        leftFront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        rightFront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        leftBack.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        rightBack.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        leftFront.setPower(spd);
+        rightFront.setPower(spd);
+        leftBack.setPower(spd);
+        rightBack.setPower(spd);
 
     }
 
