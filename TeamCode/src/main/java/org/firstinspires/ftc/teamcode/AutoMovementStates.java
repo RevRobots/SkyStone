@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 public class AutoMovementStates
 {
@@ -54,6 +55,10 @@ public class AutoMovementStates
     DriveTrain dT;
     Armstrong a;
 
+    ElapsedTime runtime;
+
+    int alternate = 1;
+
     /*Now we set up our enumerations for our state machine.
      *The enums include the entire auto program, drive train,
      *turret, lift, arm, and claw.
@@ -79,7 +84,7 @@ public class AutoMovementStates
     DriveStates cDS;
     DriveStates pDS;
 
-    Boolean isFirstDrive = false;
+    Boolean isFirstDrive = true;
 
     Boolean isDriveStateFinished = false;
 
@@ -93,7 +98,7 @@ public class AutoMovementStates
     FoundationGrabberStates cFGS;
     FoundationGrabberStates pFGS;
 
-    Boolean isFirstFoundation = false;
+    Boolean isFirstFoundation = true;
 
     Boolean isFoundationStateFinished = false;
 
@@ -107,7 +112,7 @@ public class AutoMovementStates
     TurretStates cTS;
     TurretStates pTS;
 
-    Boolean isFirstTurret = false;
+    Boolean isFirstTurret = true;
 
     Boolean isTurretStateFinished = false;
 
@@ -121,7 +126,7 @@ public class AutoMovementStates
     LiftStates cLS;
     LiftStates pLS;
 
-    Boolean isFirstLift = false;
+    Boolean isFirstLift = true;
 
     Boolean isLiftStateFinished = false;
 
@@ -135,7 +140,7 @@ public class AutoMovementStates
     ArmStates cAS;
     ArmStates pAS;
 
-    Boolean isFirstArm = false;
+    Boolean isFirstArm = true;
 
     Boolean isArmStateFinished = false;
 
@@ -149,7 +154,7 @@ public class AutoMovementStates
     ClawStates cCS;
     ClawStates pCS;
 
-    Boolean isFirstClaw = false;
+    Boolean isFirstClaw = true;
 
     Boolean isClawStateFinished = false;
 
@@ -182,6 +187,8 @@ public class AutoMovementStates
 
         dT = new DriveTrain(gamepad1, gamepad2 ,leftFront, rightFront, leftBack, rightBack, leftFoundation, rightFoundation);
         a = new Armstrong(gamepad1, gamepad2,  turret, lift, arm, leftClaw, rightClaw, imu);
+
+        runtime = new ElapsedTime();
 
         leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -255,7 +262,12 @@ public class AutoMovementStates
 
                         dT.release();
 
+                        cFGS = FoundationGrabberStates.IDOL;
+                        pFGS = FoundationGrabberStates.IDOL;
+
                         isFoundationStateFinished = true;
+
+                        break;
 
                 }
 
@@ -269,11 +281,18 @@ public class AutoMovementStates
                         cTS = TurretStates.IDOL;
                         pTS = TurretStates.BEGIN;
 
+                        break;
+
                     case IDOL:
 
                         turret.setPower(0);
 
+                        cTS = TurretStates.TURN_RIGHT;
+                        pTS = TurretStates.IDOL;
+
                         isTurretStateFinished = true;
+
+                        break;
 
                 }
 
@@ -287,11 +306,18 @@ public class AutoMovementStates
                         cLS = LiftStates.IDOL;
                         pLS = LiftStates.BEGIN;
 
+                        break;
+
                     case IDOL:
 
                         lift.setPower(0);
 
+                        cLS = LiftStates.LOWERING;
+                        pLS = LiftStates.IDOL;
+
                         isLiftStateFinished = true;
+
+                        break;
 
                 }
 
@@ -305,11 +331,15 @@ public class AutoMovementStates
                         cAS = ArmStates.IDOL;
                         pAS = ArmStates.BEGIN;
 
+                        break;
+
                     case IDOL:
 
                         arm.setPower(0.1);
 
                         isArmStateFinished = true;
+
+                        break;
 
                 }
 
@@ -324,12 +354,16 @@ public class AutoMovementStates
                         cCS = ClawStates.IDOL;
                         pCS = ClawStates.BEGIN;
 
+                        break;
+
                     case IDOL:
 
                         leftClaw.setPower(0);
                         rightClaw.setPower(0);
 
                         isClawStateFinished = true;
+
+                        break;
 
                 }
 
@@ -346,6 +380,13 @@ public class AutoMovementStates
                     isArmStateFinished = false;
                     isClawStateFinished = false;
 
+                    isFirstDrive = true;
+                    isFirstFoundation = true;
+                    isFirstTurret = true;
+                    isFirstLift = true;
+                    isFirstArm = true;
+                    isFirstClaw = true;
+
                 }
 
             case NAVIGATE_TO_STONE:
@@ -353,26 +394,57 @@ public class AutoMovementStates
                 switch (cDS)
                 {
 
-                    case RIGHT:
+                        case RIGHT:
 
-                        if (isFirstDrive == false)
-                        {
+                            if(alternate == 1)
+                            {
 
-                            dT.rightNoStop(0.25, 900);
+                                if (isFirstDrive == true)
+                                {
 
-                        }
+                                    dT.rightNoStop(0.25, 900);
 
-                        if (!leftFront.isBusy() && !rightFront.isBusy() && !leftBack.isBusy() && !rightBack.isBusy())
-                        {
+                                    isFirstDrive = false;
 
-                            dT.kill();
+                                }
 
-                            cDS = DriveStates.FORWARD;
-                            pDS = DriveStates.RIGHT;
+                                if (!leftFront.isBusy() && !rightFront.isBusy() && !leftBack.isBusy() && !rightBack.isBusy())
+                                {
 
-                            dT.forwardNoStop(0.25, 500);
+                                    dT.kill();
 
-                        }
+                                    cDS = DriveStates.FORWARD;
+                                    pDS = DriveStates.RIGHT;
+                                    alternate = 2;
+
+                                    dT.forwardNoStop(0.25, 500);
+
+                                    break;
+
+                                }
+
+                            }
+
+                            if(alternate == 2)
+                            {
+
+                                if ((!leftFront.isBusy() && !rightFront.isBusy() && !leftBack.isBusy() && !rightBack.isBusy()))
+                                {
+
+                                    dT.kill();
+
+                                    cDS = DriveStates.IDOL;
+                                    pDS = DriveStates.RIGHT;
+
+                                    isDriveStateFinished = true;
+
+                                    break;
+
+                                }
+
+                            }
+
+
 
                     case FORWARD:
 
@@ -383,6 +455,10 @@ public class AutoMovementStates
 
                             cDS = DriveStates.RIGHT;
                             pDS = DriveStates.FORWARD;
+
+                            dT.rightNoStop(0.25, 325);
+
+                            break;
 
                         }
 
@@ -400,61 +476,167 @@ public class AutoMovementStates
 
                         isFoundationStateFinished = true;
 
+                        break;
+
                 }
 
                 switch (cTS)
                 {
 
-                    case BEGIN:
+                    case TURN_RIGHT:
 
-                        turret.setPower(0);
+                        if(isFirstTurret == true)
+                        {
 
-                    case IDOL:
+                            a.tRightNoStop(0.25, 950);
 
-                        turret.setPower(0);
+                            isFirstTurret= false;
+
+                        }
+
+                        if(!turret.isBusy())
+                        {
+
+                            turret.setPower(0);
+
+                            cTS = TurretStates.IDOL;
+                            pTS = TurretStates.TURN_RIGHT;
+
+                            isTurretStateFinished = true;
+
+                            break;
+
+                        }
 
                 }
 
                 switch (cLS)
                 {
 
-                    case BEGIN:
+                    case LOWERING:
 
-                        lift.setPower(0);
+                        if(isFirstLift == true)
+                        {
+
+                            lift.setPower(0.5);
+
+                            isFirstLift = false;
+
+                            runtime.reset();
+
+                        }
+
+                        if(runtime.milliseconds() >= 750)
+                        {
+
+                            lift.setPower(0);
+
+                            cLS = LiftStates.IDOL;
+                            pLS = LiftStates.LOWERING;
+
+                            break;
+
+                        }
+
 
                     case IDOL:
 
                         lift.setPower(0);
+
+                        cLS = LiftStates.LOWERING;
+                        pLS = LiftStates.IDOL;
+
+                        isLiftStateFinished = true;
+
+                        break;
+
 
                 }
 
                 switch (cAS)
                 {
 
-                    case BEGIN:
+                    case RAISE:
 
-                        arm.setPower(0.1);
+                        if(isFirstArm == true)
+                        {
 
-                    case IDOL:
+                            a.rUpNoStop(0.25, 500);
 
-                        arm.setPower(0.1);
+                        }
+
+                        if(!arm.isBusy())
+                        {
+
+                            arm.setPower(0);
+
+                            cAS = ArmStates.LOWER;
+                            pAS = ArmStates.RAISE;
+
+                            a.rDownNoStop(0.25, 300);
+
+                            break;
+
+                        }
+
+                    case LOWER:
+
+                        if(!arm.isBusy())
+                        {
+
+                            arm.setPower(0);
+
+                            cAS = ArmStates.IDOL;
+                            pAS = ArmStates.LOWER;
+
+                            isArmStateFinished = true;
+
+                            break;
+
+                        }
 
                 }
 
                 switch (cCS)
                 {
 
-                    case BEGIN:
-
-                        leftClaw.setPower(0);
-                        rightClaw.setPower(0);
-
                     case IDOL:
 
                         leftClaw.setPower(0);
                         rightClaw.setPower(0);
 
+                        isClawStateFinished = true;
+
+                        break;
+
                 }
+
+                if (isDriveStateFinished && isFoundationStateFinished && isTurretStateFinished && isLiftStateFinished && isArmStateFinished && isClawStateFinished)
+                {
+
+                    cOS = AutoStates.NAVIGATE_TO_STONE;
+                    pOS = AutoStates.BEGIN;
+
+                    isDriveStateFinished = false;
+                    isFoundationStateFinished= false;
+                    isTurretStateFinished = false;
+                    isLiftStateFinished = false;
+                    isArmStateFinished = false;
+                    isClawStateFinished = false;
+
+                    isFirstDrive = true;
+                    isFirstFoundation = true;
+                    isFirstTurret = true;
+                    isFirstLift = true;
+                    isFirstArm = true;
+                    isFirstClaw = true;
+
+                }
+
+            case GRAB_STONE:
+
+                leftClaw.setPower(-1);
+                rightClaw.setPower(1);
 
         }
 

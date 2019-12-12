@@ -185,6 +185,21 @@ public class Armstrong
 
     }
 
+    void tRightNoStop (double spd, int tic)
+    {
+
+        turret.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        turret.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        turret.setTargetPosition(-tic);
+
+        turret.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        turret.setPower(spd);
+
+    }
+
     void tLeft (double spd, int tic)
     {
 
@@ -315,6 +330,21 @@ public class Armstrong
 
     }
 
+    void rUpNoStop (double spd, int tic)
+    {
+
+        arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        arm.setTargetPosition(tic);
+
+        arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        arm.setPower(spd);
+
+    }
+
     void rDown (double spd, int tic)
     {
 
@@ -333,6 +363,21 @@ public class Armstrong
         kill();
 
         arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+    }
+
+    void rDownNoStop (double spd, int tic)
+    {
+
+        arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        arm.setTargetPosition(-tic);
+
+        arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        arm.setPower(spd);
 
     }
 
