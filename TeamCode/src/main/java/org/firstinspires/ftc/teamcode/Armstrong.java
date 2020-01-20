@@ -36,6 +36,9 @@ public class Armstrong
     Acceleration gravity;
 
     int rSpd = 1;
+    int goalTick;
+    int currentTick;
+    int distanceTick;
 
     float tDeg;
 
@@ -96,6 +99,24 @@ public class Armstrong
             rSpd = 2;
 
         }
+
+        /*if (gamepad2.dpad_left)
+        {
+
+            goalTick = 950;
+
+            distanceTick = goalTick - currentTick;
+
+            tLeftNoStop(0.25, distanceTick);
+
+            //if (!turret.isBusy())
+
+        } else if (gamepad2.dpad_right)
+        {
+
+
+
+        }*/
 
         lift.setPower(gamepad2.left_stick_y);
 
@@ -218,6 +239,21 @@ public class Armstrong
         kill();
 
         turret.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+    }
+
+    void tLeftNoStop (double spd, int tic)
+    {
+
+        turret.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        turret.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        turret.setTargetPosition(tic);
+
+        turret.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        turret.setPower(spd);
 
     }
 
