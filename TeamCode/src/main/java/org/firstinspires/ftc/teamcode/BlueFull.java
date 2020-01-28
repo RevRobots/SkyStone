@@ -59,8 +59,8 @@ import java.util.List;
  * IMPORTANT: In order to use this OpMode, you need to obtain your own Vuforia license key as
  * is explained below.
  */
-@Autonomous(name = "Red Full", group = "Red")
-public class RedFull extends LinearOpMode {
+@Autonomous(name = "Blue Full", group = "Blue")
+public class BlueFull extends LinearOpMode {
     private static final String TFOD_MODEL_ASSET = "Skystone.tflite";
     private static final String LABEL_FIRST_ELEMENT = "Stone";
     private static final String LABEL_SECOND_ELEMENT = "Skystone";
@@ -117,11 +117,12 @@ public class RedFull extends LinearOpMode {
 
     DriveTrain dT;
     Armstrong a;
-    RedStates rS;
+    BlueStates bS;
 
     ElapsedTime runtime;
 
     int count = 1;
+    int dCount = 1;
     int extraTick;
 
     boolean skystone = false;
@@ -194,7 +195,7 @@ public class RedFull extends LinearOpMode {
         dT.release();
         a.kill();
 
-        rS = new RedStates(leftFront, rightFront, leftBack, rightBack, leftFoundation, rightFoundation, turret, lift, arm, leftClaw, rightClaw, dT, a, runtime);
+        bS = new BlueStates(leftFront, rightFront, leftBack, rightBack, leftFoundation, rightFoundation, turret, lift, arm, leftClaw, rightClaw, dT, a, runtime);
 
         /** Wait for the game to begin */
         telemetry.addData(">", "Press Play to start op mode");
@@ -205,12 +206,12 @@ public class RedFull extends LinearOpMode {
         if (opModeIsActive())
         {
 
-            while (rS.getState() != "finished")
+            while (bS.getState() != "finished")
             {
 
-                rS.run1();
+                bS.run1();
 
-                telemetry.addData("State>", rS.getState());
+                telemetry.addData("State>", bS.getState());
 
                 telemetry.update();
 
@@ -251,7 +252,7 @@ public class RedFull extends LinearOpMode {
                         telemetry.update();
                       }
 
-                      if(label == "Skystone" || count == 3)
+                      if(label == "Skystone" || count == 3 || dCount == 4)
                       {
 
                           telemetry.addData("Guess What", "Skystone Baby");
@@ -259,7 +260,7 @@ public class RedFull extends LinearOpMode {
                           dT.kill();
                           break;
 
-                      } else if (label == "Stone" && runtime.milliseconds() >= 1000)
+                      } else if (label == "Stone" && runtime.milliseconds() >= 250)
                       {
 
                           telemetry.addData("Guess What", "Nothing!");
@@ -267,14 +268,16 @@ public class RedFull extends LinearOpMode {
                           count++;
                           extraTick = extraTick + 380;
 
-                          dT.left(0.25, 380);
+                          dT.right(0.25, 380);
 
                           runtime.reset();
 
-                      } else if (runtime.milliseconds() >= 1500)
+                      } else if (runtime.milliseconds() >= 500)
                       {
 
                           a.rUp(0.25, 50);
+
+                          dCount++;
 
                           runtime.reset();
 
@@ -308,23 +311,23 @@ public class RedFull extends LinearOpMode {
 
             arm.setPower(0.15);
 
-            dT.backwards(0.3, 350);
+            dT.backwards(0.25, 350);
 
-            dT.right(0.25, 3120 + extraTick);
+            dT.left(0.25, 3120 + extraTick);
 
-            dT.forward(0.3, 250);
+            dT.forward(0.25, 250);
 
             a.unclamp(1, 250);
 
             dT.backwards(0.25, 75);
 
-            dT.tRight(0.3, 1750);
+            dT.tRight(0.25, 1700);
 
-            dT.backwards(0.3, 275);
+            dT.backwards(0.25, 275);
 
             dT.grab();
 
-            a.tRight(1, 950);
+            a.tLeft(1, 950);
 
             dT.forward(0.5, 1400);
 
@@ -332,11 +335,11 @@ public class RedFull extends LinearOpMode {
 
             dT.backwards(0.25, 50);
 
-            dT.right(0.5, 800);
+            dT.left(0.25, 800);
 
-            dT.backwards(0.3, 950);
+            dT.backwards(0.25, 950);
 
-            dT.right(0.3, 800);
+            dT.left(0.25, 800);
 
             /*aMS.setState("moveToFoundation");
 

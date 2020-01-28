@@ -3,13 +3,12 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-public class AutoMovementStates
+public class BlueStates
 {
 
     /*This class is to use state machines to be able to
@@ -165,7 +164,7 @@ public class AutoMovementStates
      *configuration to assign motors to motors and so on.
      */
 
-    public AutoMovementStates (DcMotor lF, DcMotor rF, DcMotor lB, DcMotor rB, Servo lFo, Servo rFo, DcMotor t, DcMotor l, DcMotor ar, CRServo lC, CRServo rC, DriveTrain dt, Armstrong armstrong, ElapsedTime rt)
+    public BlueStates(DcMotor lF, DcMotor rF, DcMotor lB, DcMotor rB, Servo lFo, Servo rFo, DcMotor t, DcMotor l, DcMotor ar, CRServo lC, CRServo rC, DriveTrain dt, Armstrong armstrong, ElapsedTime rt)
     {
 
         leftFront = lF;
@@ -219,6 +218,13 @@ public class AutoMovementStates
     {
 
         return currentState;
+
+    }
+
+    void setState (String state)
+    {
+
+        currentState = state;
 
     }
 
@@ -451,7 +457,7 @@ public class AutoMovementStates
 
                 case BEGIN:
 
-                    cDSBegin();
+                    cDSBegin1();
 
                     break;
 
@@ -514,12 +520,44 @@ public class AutoMovementStates
         {
 
             cOS = AutoStates.MOVE_TO_FOUNDATION;
+            currentState = "finished";
 
         }
 
     }
 
-    void cDSBegin ()
+    void moveToFoundation (int extraTick)
+    {
+
+        if (cDS != DriveStates.IDOL && cTS != TurretStates.IDOL)
+        {
+
+            switch (cDS)
+            {
+
+                case BEGIN:
+
+                    cDSBegin2(extraTick);
+
+                    break;
+
+                case RIGHT:
+
+                    cDSRight();
+
+                    break;
+
+                case IDOL:
+
+                    break;
+
+            }
+
+        }
+
+    }
+
+    void cDSBegin1 ()
     {
 
         dT.forwardNoStop(.25, 850);
@@ -528,7 +566,30 @@ public class AutoMovementStates
 
     }
 
+    void cDSBegin2 (int extraTick)
+    {
+
+        dT.rightNoStop(0.25, 3120 + extraTick);
+
+        cDS = DriveStates.RIGHT;
+
+    }
+
     void cDSForward ()
+    {
+
+        if (!leftFront.isBusy() && !rightFront.isBusy() && !leftBack.isBusy() && !rightBack.isBusy())
+        {
+
+            dT.kill();
+
+            cDS = DriveStates.IDOL;
+
+        }
+
+    }
+
+    void cDSRight ()
     {
 
         if (!leftFront.isBusy() && !rightFront.isBusy() && !leftBack.isBusy() && !rightBack.isBusy())
