@@ -12,56 +12,45 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 public class RedStates
 {
 
-    /*This class is to use state machines to be able to
-     *move more than one part of Armstrong, our robot,
-     *at once. This controls all of the robot with help
-     * of the DriveTrain class and Armstrong Class for
-     * robot movement. This should be used inside of the
-     * Red Full Autonomous and the Blue Full Autonomous.
-     */
+    /*This class is made by FTC #12535 Revolutionary Robots for our robot Armstrong. The variables and
+    methods you find here are for the state machines used to control the robot with help from the
+    Drive Train and Armstrong Classes.*/
 
-    /*Below we set up variables for the rest of our program.
-     *We assign controllers, the configuration with HardwareMap,
-     *DcMotors, Servos, Continuous Rotation Servo, Gyroscope,
-     *and classes.
-     */
-
+    //Gamepad Variables
     Gamepad gamepad1;
     Gamepad gamepad2;
 
-    HardwareMap hardwareMap;
-
+    //Wheel Motors
     DcMotor leftFront;
     DcMotor rightFront;
     DcMotor leftBack;
     DcMotor rightBack;
 
+    //Foundation Servos
     Servo leftFoundation;
     Servo rightFoundation;
 
-    HardwareMap map;
-
+    //Turret Motor
     DcMotor turret;
 
+    //Lift Motor
     DcMotor lift;
 
+    //Arm Motor
     DcMotor arm;
 
+    //Claw Continuous Rotation Servo
     CRServo leftClaw;
     CRServo rightClaw;
 
-    BNO055IMU imu;
-
+    //Robot Classes
     DriveTrain dT;
     Armstrong a;
 
+    //Timer to perform timed motor control
     ElapsedTime runtime;
 
-    /*Now we set up our enumerations for our state machine.
-     *The enums include the entire auto program, drive train,
-     *turret, lift, arm, and claw.
-     */
-
+    //Enumerations for the entire set of autonomous programs
     private enum AutoStates
     {
 
@@ -69,104 +58,86 @@ public class RedStates
 
     }
 
+    //Variable to use in the state machines
     AutoStates cOS = AutoStates.BEGIN;
-    AutoStates pOS;
 
-    boolean isFirstRun = true;
+    //String to display telemetry with
+    String currentState = "begin";
 
-    String currentState;
-
+    //Enumerations for the wheel base options
     private enum DriveStates
     {
 
-        BEGIN, FORWARD, BACKWARD, RIGHT, LEFT, TURN_RIGHT, TURN_LEFT, IDOL
+        BEGIN, FORWARD, BACKWARD, RIGHT, LEFT, TURN_RIGHT, TURN_LEFT, IDLE
 
     }
 
+    //Variable to use in the state machines
     DriveStates cDS = DriveStates.BEGIN;
-    DriveStates pDS;
 
-    Boolean isFirstDrive = true;
-
-    Boolean isDriveStateFinished = false;
-
+    //Enumerations for the Foundation Servos
     private enum FoundationGrabberStates
     {
 
-        BEGIN, GRAB, RELEASE, IDOL
+        BEGIN, GRAB, RELEASE, IDLE
 
     }
 
+    //Variable to use inside of the state machines
     FoundationGrabberStates cFGS = FoundationGrabberStates.BEGIN;
-    FoundationGrabberStates pFGS;
 
-    Boolean isFirstFoundation = true;
-
-    Boolean isFoundationStateFinished = false;
-
+    //Enumerations of turret actions
     private enum TurretStates
     {
 
-        BEGIN, TURN_RIGHT, TURN_LEFT, IDOL
+        BEGIN, TURN_RIGHT, TURN_LEFT, IDLE
 
     }
 
+    //Variables to use inside of the state machines
     TurretStates cTS = TurretStates.BEGIN;
-    TurretStates pTS;
 
-    Boolean isFirstTurret = true;
-
-    Boolean isTurretStateFinished = false;
-
+    //Enumerations of the actions the lift can do
     private enum LiftStates
     {
 
-        BEGIN, RAISE, LOWER, IDOL
+        BEGIN, RAISE, LOWER, IDLE
 
     }
 
+    //Variable to use inside of the state machines
     LiftStates cLS = LiftStates.BEGIN;
     LiftStates pLS;
 
-    Boolean isFirstLift = true;
-
-    Boolean isLiftStateFinished = false;
-
+    //Enumerations for the arm options
     private enum ArmStates
     {
 
-        BEGIN, RAISE, LOWER, IDOL
+        BEGIN, RAISE, LOWER, IDLE
 
     }
 
+    //Variables to use in the state machines
     ArmStates cAS = ArmStates.BEGIN;
-    ArmStates pAS;
 
-    Boolean isFirstArm = true;
-
-    Boolean isArmStateFinished = false;
-
+    //Enumerations for the claw actions
     private enum ClawStates
     {
 
-        BEGIN, GRABBING, RELEASING, GRABBED, RELEASED, IDOL
+        BEGIN, GRABBING, RELEASING, GRABBED, RELEASED, IDLE
 
     }
 
+    //Variable to use in the state machines
     ClawStates cCS = ClawStates.BEGIN;
-    ClawStates pCS;
-
-    Boolean isFirstClaw = true;
-
-    Boolean isClawStateFinished = false;
-
-    /*Constructor for our class to be used in our auto programs.
-     *Assigns the variables that we set up above using the
-     *configuration to assign motors to motors and so on.
-     */
 
     public RedStates(DcMotor lF, DcMotor rF, DcMotor lB, DcMotor rB, Servo lFo, Servo rFo, DcMotor t, DcMotor l, DcMotor ar, CRServo lC, CRServo rC, DriveTrain dt, Armstrong armstrong, ElapsedTime rt)
     {
+
+        /*Constructor for our class to be used in our auto programs.
+         *Assigns the variables that we set up above using the
+         *configuration to assign motors to motors and so on.
+         */
 
         leftFront = lF;
         rightFront = rF;
@@ -193,8 +164,41 @@ public class RedStates
 
     }
 
-    void run1 ()
+    void runFull ()
     {
+
+        //Method to run the state machine
+
+        //Looks at what cOS equals
+        switch (cOS)
+        {
+
+            //If cOS equals BEGIN
+            case BEGIN:
+
+                //Runs method below
+                begin();
+
+                //Exits case
+                break;
+
+            //If cOS equals NAVIGATE_TO_STONE
+            case NAVIGATE_TO_STONE:
+
+                //Runs method below
+                navigateToStoneFull();
+
+                //Exits case
+                break;
+
+        }
+
+    }
+
+    void runInside ()
+    {
+
+        //Work in progress method for alternative programs
 
         switch (cOS)
         {
@@ -207,7 +211,7 @@ public class RedStates
 
             case NAVIGATE_TO_STONE:
 
-                navigateToStone();
+                navigateToStoneInside();
 
                 break;
 
@@ -218,261 +222,62 @@ public class RedStates
     String getState ()
     {
 
+        //Returns the state to the phone for telemetry
         return currentState;
-
-    }
-
-    void setState (String state)
-    {
-
-        currentState = state;
-
-    }
-
-    void run2(int extraTick) throws InterruptedException
-    {
-
-        switch (cOS)
-        {
-
-            case MOVE_TO_FOUNDATION:
-
-                switch (cDS)
-                {
-
-                    case RIGHT:
-
-                        if (isFirstDrive == true)
-                        {
-
-                            dT.right(0.25, 3120 + extraTick);
-
-                            isFirstDrive = false;
-
-                        }
-
-                        if (!leftFront.isBusy() && !rightFront.isBusy() && !leftBack.isBusy() && !rightBack.isBusy())
-                        {
-
-                            dT.kill();
-
-                            cDS = DriveStates.IDOL;
-                            pDS = DriveStates.RIGHT;
-
-                            break;
-
-                        }
-
-                    case IDOL:
-
-                        dT.kill();
-
-                        cDS = DriveStates.TURN_RIGHT;
-                        pDS = DriveStates.IDOL;
-
-                        isDriveStateFinished = true;
-
-                        break;
-
-                }
-
-                switch (cFGS)
-                {
-
-                    case IDOL:
-
-                        dT.release();
-
-                        cFGS = FoundationGrabberStates.IDOL;
-                        pFGS = FoundationGrabberStates.IDOL;
-
-                        isFoundationStateFinished = true;
-
-                        break;
-
-                }
-
-                switch (cTS)
-                {
-
-                    case TURN_RIGHT:
-
-                        if (isFirstTurret == true)
-                        {
-
-                            a.tRightNoStop(0.25, 950);
-
-                            isFirstTurret = false;
-
-                        }
-
-                        if (!turret.isBusy())
-                        {
-
-                            turret.setPower(0);
-
-                            cTS = TurretStates.IDOL;
-                            pTS = TurretStates.TURN_RIGHT;
-
-                            runtime.reset();
-
-                            break;
-
-                        }
-
-                    case IDOL:
-
-                        turret.setPower(0);
-
-                        if (runtime.milliseconds() >= 250)
-                        {
-
-                            cTS = TurretStates.TURN_LEFT;
-                            pTS = TurretStates.IDOL;
-
-                            a.tLeftNoStop(0.25, 950);
-
-                            break;
-
-                        }
-
-                    case TURN_LEFT:
-
-                        if (!turret.isBusy())
-                        {
-
-                            turret.setPower(0);
-
-                            cTS = TurretStates.IDOL;
-                            pTS = TurretStates.TURN_LEFT;
-
-                            isTurretStateFinished = true;
-
-                            break;
-
-                        }
-
-                }
-
-                switch(cLS)
-                {
-
-                    case IDOL:
-
-                        lift.setPower(0);
-
-                        cLS = LiftStates.IDOL;
-                        pLS = LiftStates.IDOL;
-
-                        isLiftStateFinished = true;
-
-                        break;
-
-                }
-
-                switch (cAS)
-                {
-
-                    case IDOL:
-
-                        arm.setPower(0.1);
-
-                        cAS = ArmStates.IDOL;
-                        pAS = ArmStates.IDOL;
-
-                        isArmStateFinished = true;
-
-                        break;
-
-                }
-
-                switch (cCS)
-                {
-
-                    case IDOL:
-
-                        leftClaw.setPower(-1);
-                        rightClaw.setPower(1);
-
-                        cCS = ClawStates.IDOL;
-                        pCS = ClawStates.IDOL;
-
-                        break;
-
-                }
-
-                if (isDriveStateFinished && isFoundationStateFinished && isTurretStateFinished && isLiftStateFinished && isArmStateFinished && isClawStateFinished)
-                {
-
-                    cOS = AutoStates.MOVE_TO_FOUNDATION;
-                    pOS = AutoStates.NAVIGATE_TO_STONE;
-
-                    isDriveStateFinished = false;
-                    isFoundationStateFinished= false;
-                    isTurretStateFinished = false;
-                    isLiftStateFinished = false;
-                    isArmStateFinished = false;
-                    isClawStateFinished = false;
-
-                    isFirstDrive = true;
-                    isFirstFoundation = true;
-                    isFirstTurret = true;
-                    isFirstLift = true;
-                    isFirstArm = true;
-                    isFirstClaw = true;
-
-                    break;
-
-                }
-
-            case PLACE_STONE:
-
-                a.unclamp(1, 250);
-
-                cOS = AutoStates.MOVE_FOUNDATION;
-                pOS = AutoStates.PLACE_STONE;
-
-                break;
-
-        }
 
     }
 
     void begin ()
     {
 
+        //Sets the state tracker
         currentState = "begin";
 
+        //Sets cOS to run to the next case/state
         cOS = AutoStates.NAVIGATE_TO_STONE;
 
     }
 
-    void navigateToStone ()
+    void navigateToStoneFull ()
     {
 
-        if (cDS != DriveStates.IDOL && cLS != LiftStates.IDOL && cAS != ArmStates.IDOL)
+        //Move to the stone "wall" to detect a skystone
+
+        //Checks to see if the states are finished
+        if (cDS != DriveStates.IDLE && cLS != LiftStates.IDLE && cAS != ArmStates.IDLE)
         {
 
+            //Looks at what cDS equals
             switch (cDS)
             {
 
+                //If cDS equals BEGIN
                 case BEGIN:
 
+                    //Runs method below
                     cDSBegin1();
 
+                    //Exits case
                     break;
 
+                //If cDS equals FORWARD
                 case FORWARD:
 
-                    cDSForward();
+                    //Runs method below
+                    cDSForwardFull();
 
+                    //Exits case
                     break;
 
-                case IDOL:
+                //If cDS equals IDLE
+                case IDLE:
 
+                    //Exits case
                     break;
 
             }
+
+            //The state machines below do the same as the one above
 
             switch (cLS)
             {
@@ -489,7 +294,7 @@ public class RedStates
 
                     break;
 
-                case IDOL:
+                case IDLE:
 
                     break;
 
@@ -511,7 +316,101 @@ public class RedStates
 
                     break;
 
-                case IDOL:
+                case IDLE:
+
+                    break;
+
+            }
+
+        } else
+        {
+
+            //When all states are idle
+
+            //Sets AutoStates to the next state
+            cOS = AutoStates.MOVE_TO_FOUNDATION;
+            //Telemetry for the phone
+            currentState = "finished";
+
+        }
+
+    }
+
+    void navigateToStoneInside ()
+    {
+
+        //work in progress method
+
+        currentState = "Stone";
+
+        if (cDS != DriveStates.IDLE && cLS != LiftStates.IDLE && cAS != ArmStates.IDLE)
+        {
+
+            switch (cDS)
+            {
+
+                case BEGIN:
+
+                    cDSBegin1();
+
+                    break;
+
+                case FORWARD:
+
+                    cDSForwardInside();
+
+                    break;
+
+                case LEFT:
+
+                    cDSLeft();
+
+                    break;
+
+                case IDLE:
+
+                    break;
+
+            }
+
+            switch (cLS)
+            {
+
+                case BEGIN:
+
+                    cLSBegin();
+
+                    break;
+
+                case LOWER:
+
+                    cLSLower();
+
+                    break;
+
+                case IDLE:
+
+                    break;
+
+
+            }
+
+            switch (cAS)
+            {
+
+                case BEGIN:
+
+                    cASBegin();
+
+                    break;
+
+                case RAISE:
+
+                    cASRaise();
+
+                    break;
+
+                case IDLE:
 
                     break;
 
@@ -527,78 +426,66 @@ public class RedStates
 
     }
 
-    void moveToFoundation (int extraTick)
-    {
-
-        if (cDS != DriveStates.IDOL && cTS != TurretStates.IDOL)
-        {
-
-            switch (cDS)
-            {
-
-                case BEGIN:
-
-                    cDSBegin2(extraTick);
-
-                    break;
-
-                case RIGHT:
-
-                    cDSRight();
-
-                    break;
-
-                case IDOL:
-
-                    break;
-
-            }
-
-        }
-
-    }
-
     void cDSBegin1 ()
     {
 
+        //Sets the robot to move forward
         dT.forwardNoStop(.25, 850);
 
+        //Sets state to FORWARD
         cDS = DriveStates.FORWARD;
 
     }
 
-    void cDSBegin2 (int extraTick)
+    void cDSForwardFull ()
     {
 
-        dT.rightNoStop(0.25, 3120 + extraTick);
-
-        cDS = DriveStates.RIGHT;
-
-    }
-
-    void cDSForward ()
-    {
-
+        //Waits for the encoders to reach target position
         if (!leftFront.isBusy() && !rightFront.isBusy() && !leftBack.isBusy() && !rightBack.isBusy())
         {
 
+            //Stops wheelbase
             dT.kill();
 
-            cDS = DriveStates.IDOL;
+            //Sets wheelbase to idle
+            cDS = DriveStates.IDLE;
 
         }
 
     }
 
-    void cDSRight ()
+    void cDSForwardInside ()
     {
 
+        //Waits for the encoders to reach target position
         if (!leftFront.isBusy() && !rightFront.isBusy() && !leftBack.isBusy() && !rightBack.isBusy())
         {
 
+            //Stops wheelbase
             dT.kill();
 
-            cDS = DriveStates.IDOL;
+            //Sets the drive train states to LEFT
+            cDS = DriveStates.LEFT;
+
+            //Moves wheelbase to the left
+            dT.leftNoStop(0.25, 500);
+
+        }
+
+    }
+
+    void cDSLeft ()
+    {
+
+        //Waits for the encoders to reach target position
+        if (!leftFront.isBusy() && !rightFront.isBusy() && !leftBack.isBusy() && !rightBack.isBusy())
+        {
+
+            //Stops wheelbase
+            dT.kill();
+
+            //Sets wheel base to idle
+            cDS = DriveStates.IDLE;
 
         }
 
@@ -607,10 +494,13 @@ public class RedStates
     void cLSBegin ()
     {
 
+        //Resets Timer
         runtime.reset();
 
+        //Sets power of the lift to 0.75
         lift.setPower(0.75);
 
+        //Sets LiftStates to LOWER
         cLS = LiftStates.LOWER;
 
     }
@@ -618,12 +508,15 @@ public class RedStates
     void cLSLower ()
     {
 
+        //Waits for the timer to hit half a second or 500 milliseconds
         if (runtime.milliseconds() >= 500)
         {
 
+            //Stops lift
             lift.setPower(0);
 
-            cLS = LiftStates.IDOL;
+            //Sets lift to idle
+            cLS = LiftStates.IDLE;
 
         }
 
@@ -632,8 +525,10 @@ public class RedStates
     void cASBegin ()
     {
 
+        //Sets arm to rotate up
         a.rUpNoStop(0.25, 250);
 
+        //Sets state to RAISE
         cAS = ArmStates.RAISE;
 
     }
@@ -641,12 +536,15 @@ public class RedStates
     void cASRaise ()
     {
 
+        //Waits until arm encoder hits target position
         if (!arm.isBusy())
         {
 
+            //Stops arm
             arm.setPower(0);
 
-            cAS = ArmStates.IDOL;
+            //Sets state to idle
+            cAS = ArmStates.IDLE;
 
         }
 

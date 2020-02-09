@@ -4,29 +4,34 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.Servo;
 
+/*This class is made by FTC #12535 Revolutionary Robots for our robot Armstrong. The variables and
+methods you find here are for the wheel base of Armstrong.*/
+
 public class DriveTrain
 {
 
+    //Gamepad Variables
     Gamepad gamepad1;
     Gamepad gamepad2;
 
+    //Wheel Motors
     DcMotor leftFront;
     DcMotor rightFront;
     DcMotor leftBack;
     DcMotor rightBack;
 
+    //Foundation Servo
     Servo leftFoundation;
     Servo rightFoundation;
 
+    //Drive Speed Limiter
     double dSpd = 2;
-
-    boolean toggle = false;
-
-    String foundation;
-    //Variables
 
     public DriveTrain (Gamepad g1, Gamepad g2, DcMotor lF, DcMotor rF, DcMotor lB, DcMotor rB, Servo lFo, Servo rFo)
     {
+
+        //The constructor of the class allows the class to be used on other programs as well as
+        //synchronizing the variables from the main program
 
         gamepad1 = g1;
         gamepad2 = g2;
@@ -39,76 +44,58 @@ public class DriveTrain
         leftFoundation = lFo;
         rightFoundation = rFo;
 
-        //Constructor
-
     }
 
     void teleOpPackage ()
     {
 
+        //Wheel movement in relation to joystick
+        //Arcade Drive
         leftFront.setPower(((gamepad1.left_stick_y)-(gamepad1.left_stick_x)-(gamepad1.right_stick_x))/dSpd);
         rightFront.setPower(((-(gamepad1.left_stick_y))-(gamepad1.left_stick_x)-(gamepad1.right_stick_x))/dSpd);
         leftBack.setPower(((gamepad1.left_stick_y)+(gamepad1.left_stick_x)-(gamepad1.right_stick_x))/dSpd);
         rightBack.setPower(((-(gamepad1.left_stick_y))+(gamepad1.left_stick_x)-(gamepad1.right_stick_x))/dSpd);
-        //Directions
 
+        //Speed Controller
         if (gamepad1.y)
         {
 
+            //Hyper(Full) Speed
             dSpd = 1;
-            //full speed
 
         } else if (gamepad1.x)
         {
 
-            dSpd = 4/3;
             //Three Quarters Speed
+            dSpd = 1.33333;
 
         } else if (gamepad1.a)
         {
 
-            dSpd = 2;
             //Half Speed
+            dSpd = 2;
 
         } else if (gamepad1.b)
         {
 
-            dSpd = 4;
             //Quarter Speed
+            dSpd = 4;
 
         }
 
         if (gamepad1.right_trigger != 0)
         {
 
+            //Foundation servos down with right trigger
             leftFoundation.setPosition(1);
             rightFoundation.setPosition(1);
 
         } else
         {
 
+            //Foundation servos flat with no trigger
             leftFoundation.setPosition(0.5);
             rightFoundation.setPosition(0.4);
-
-        }
-
-        if (gamepad1.left_bumper && toggle==false)
-        {
-
-            leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            leftBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            rightBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            //Brake
-
-        } else if (gamepad1.left_bumper && toggle==true)
-        {
-
-            leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-            rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-            leftBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-            rightBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-            //Un-Brake
 
         }
 
@@ -117,82 +104,66 @@ public class DriveTrain
     double getDSpd ()
     {
 
-        return this.dSpd;
         //Return dSpd to main program for telemetry
-
-    }
-
-    boolean getToggle ()
-    {
-
-        return this.toggle;
-        //Return toggle to main program for telemetry
-
-    }
-
-    String getFoundation ()
-    {
-
-        if (leftFoundation.getPosition() == 0)
-        {
-
-            foundation = "Down";
-
-        } else if (leftFoundation.getPosition() == 0.5)
-        {
-
-            foundation = "Up";
-
-        }
-
-        return this.foundation;
+        return this.dSpd;
 
     }
 
     void forward (double spd, int tic)
     {
 
+        //Program to move robot forward in autonomous with encoders
+        //The rest of the wheel base movement methods will be the same, except the NoStop methods
+
+        //Reset encoders for wheels
         leftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         rightFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         leftBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         rightBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
+        //Activate encoders
         leftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         leftBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rightBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
+        //Sets encoder distance goal
         leftFront.setTargetPosition(tic);
         rightFront.setTargetPosition(tic);
         leftBack.setTargetPosition(tic);
         rightBack.setTargetPosition(tic);
 
+        //Sets encoders to run until the target position
         leftFront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         rightFront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         leftBack.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         rightBack.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
+        //Gives power to motors to run
         leftFront.setPower(spd);
         rightFront.setPower(spd);
         leftBack.setPower(spd);
         rightBack.setPower(spd);
 
+        //Waits until the encoders hit the target position
         while (leftFront.isBusy() && rightFront.isBusy() && leftBack.isBusy() && rightBack.isBusy());
 
+        //Stops robot
         kill();
 
+        //Resets encoders for the next method
         leftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         rightFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         leftBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         rightBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
-        //Encoder Forward
 
     }
 
     void forwardNoStop (double spd, int tic)
     {
 
+        //Same program as other methods as the other, but doesn't include the while loop
+
         leftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         rightFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         leftBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -217,6 +188,15 @@ public class DriveTrain
         rightFront.setPower(spd);
         leftBack.setPower(spd);
         rightBack.setPower(spd);
+
+        /*Awaiting
+        if (!leftFront.isBusy() && !rightFront.isBusy() && !leftBack.isBusy() && !rightBack.isBusy())
+        {
+
+            kill();
+
+        }
+         */
 
     }
 
@@ -256,8 +236,6 @@ public class DriveTrain
         rightFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         leftBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         rightBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
-        //Encoder Backwards
 
     }
 
@@ -578,6 +556,7 @@ public class DriveTrain
     void grab ()
     {
 
+        //Moves Servos Down
         leftFoundation.setPosition(1);
         rightFoundation.setPosition(1);
 
@@ -586,6 +565,7 @@ public class DriveTrain
     void release ()
     {
 
+        //Moves Servos Up
         leftFoundation.setPosition(0.5);
         rightFoundation.setPosition(0.4);
 
@@ -594,11 +574,12 @@ public class DriveTrain
     void kill ()
     {
 
+        //Stops wheelbase
+
         leftFront.setPower(0);
         rightFront.setPower(0);
         leftBack.setPower(0);
         rightBack.setPower(0);
-
 
     }
 

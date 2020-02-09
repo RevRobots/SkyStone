@@ -36,8 +36,6 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.Gamepad;
-import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -59,8 +57,8 @@ import java.util.List;
  * IMPORTANT: In order to use this OpMode, you need to obtain your own Vuforia license key as
  * is explained below.
  */
-@Autonomous(name = "Red Full", group = "Red")
-public class RedFull extends LinearOpMode {
+@Autonomous(name = "Red Stone", group = "Red")
+public class RedStone extends LinearOpMode {
     private static final String TFOD_MODEL_ASSET = "Skystone.tflite";
     private static final String LABEL_FIRST_ELEMENT = "Stone";
     private static final String LABEL_SECOND_ELEMENT = "Skystone";
@@ -363,52 +361,22 @@ public class RedFull extends LinearOpMode {
             a.rUp(0.5, 300);
 
             //Sets idle power
-            arm.setPower(0.15);
+            arm.setPower(0.2);
 
             //Moves robot back to clear the bridge structure
-            dT.backwards(0.3, 350);
+            dT.backwards(0.3, 1100);
 
-            //Moves robot right to the foundation plate
-            dT.right(0.25, 3120 + extraTick);
+            a.tRight(0.25, 950);
 
-            //Moves forward to the foundation
-            dT.forward(0.3, 250);
+            arm.setPower(0.2);
 
-            //Releases the skystone
+            dT.right(0.25, 3220 + extraTick);
+
             a.unclamp(1, 250);
 
-            //Backs away from the foundation plate
-            dT.backwards(0.25, 75);
+            Thread.sleep(250);
 
-            //Turns 180 degrees
-            dT.tRight(0.3, 1750);
-
-            //Backs into the foundation plate
-            dT.backwards(0.3, 275);
-
-            //Grabs foundation plate
-            dT.grab();
-
-            //Rotates arm out of the way
-            a.tRight(1, 950);
-
-            //Pulls foundation plate to building zone
-            dT.forward(0.5, 1400);
-
-            //Lets go of the foundation plate
-            dT.release();
-
-            //Backwards to avoid wall
-            dT.backwards(0.25, 50);
-
-            //Moves robot right
-            dT.right(0.5, 800);
-
-            //Moves robot behind alliance member
-            dT.backwards(0.3, 950);
-
-            //Moves right to park
-            dT.right(0.3, 800);
+            dT.left(0.25, 1500);
 
         }
 

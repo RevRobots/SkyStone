@@ -113,6 +113,8 @@ public class BlueFull extends LinearOpMode {
     CRServo leftClaw;
     CRServo rightClaw;
 
+    Servo capstone;
+
     BNO055IMU imu;
 
     DriveTrain dT;
@@ -168,10 +170,12 @@ public class BlueFull extends LinearOpMode {
         leftClaw = hardwareMap.crservo.get("leftClaw");
         rightClaw = hardwareMap.crservo.get("rightClaw");
 
+        capstone = hardwareMap.servo.get("capstone");
+
         imu = hardwareMap.get(BNO055IMU.class, "imu");
 
         dT = new DriveTrain(gamepad1, gamepad2 ,leftFront, rightFront, leftBack, rightBack, leftFoundation, rightFoundation);
-        a = new Armstrong(gamepad1, gamepad2,  turret, lift, arm, leftClaw, rightClaw, imu);
+        a = new Armstrong(gamepad1, gamepad2,  turret, lift, arm, leftClaw, rightClaw, capstone, imu);
 
         runtime = new ElapsedTime();
 
@@ -260,7 +264,7 @@ public class BlueFull extends LinearOpMode {
                           dT.kill();
                           break;
 
-                      } else if (label == "Stone" && runtime.milliseconds() >= 250)
+                      } else if (label == "Stone" /*'&& runtime.milliseconds() >= 250*/)
                       {
 
                           telemetry.addData("Guess What", "Nothing!");
@@ -301,7 +305,7 @@ public class BlueFull extends LinearOpMode {
             leftClaw.setPower(-1);
             rightClaw.setPower(1);
 
-            a.setCIdol(1);
+            a.setCIdle(1);
 
             runtime.reset();
 
@@ -327,19 +331,19 @@ public class BlueFull extends LinearOpMode {
 
             dT.grab();
 
-            a.tLeft(1, 950);
+            a.tRight(1, 950);
 
             dT.forward(0.5, 1400);
 
+            dT.tLeft(0.25, 500);
+
             dT.release();
+
+            dT.tRight(0.25, 300);
 
             dT.backwards(0.25, 50);
 
-            dT.left(0.25, 800);
-
-            dT.backwards(0.25, 950);
-
-            dT.left(0.25, 800);
+            dT.left(0.25, 1200);
 
             /*aMS.setState("moveToFoundation");
 

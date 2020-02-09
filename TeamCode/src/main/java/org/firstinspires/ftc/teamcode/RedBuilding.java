@@ -45,6 +45,8 @@ public class RedBuilding extends LinearOpMode
     CRServo leftClaw;
     CRServo rightClaw;
 
+    Servo capstone;
+
     BNO055IMU imu;
 
     Orientation angles;
@@ -82,11 +84,13 @@ public class RedBuilding extends LinearOpMode
         leftClaw = hardwareMap.crservo.get("leftClaw");
         rightClaw = hardwareMap.crservo.get("rightClaw");
 
+        capstone = hardwareMap.servo.get("capstone");
+
         imu = hardwareMap.get(BNO055IMU.class, "imu");
         imu.initialize(parameters);
 
         dT = new DriveTrain(gamepad1, gamepad2 ,leftFront, rightFront, leftBack, rightBack, leftFoundation, rightFoundation);
-        a = new Armstrong(gamepad1, gamepad2,  turret, lift, arm, leftClaw, rightClaw, imu);
+        a = new Armstrong(gamepad1, gamepad2,  turret, lift, arm, leftClaw, rightClaw, capstone, imu);
 
         leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         leftFront.setDirection(DcMotorSimple.Direction.REVERSE);

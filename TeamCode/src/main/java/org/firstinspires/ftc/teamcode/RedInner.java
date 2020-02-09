@@ -1,4 +1,3 @@
-//@Disabled
 /* Copyright (c) 2019 FIRST. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification,
@@ -32,7 +31,9 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -59,8 +60,11 @@ import java.util.List;
  * IMPORTANT: In order to use this OpMode, you need to obtain your own Vuforia license key as
  * is explained below.
  */
-@Autonomous(name = "Red Full", group = "Red")
-public class RedFull extends LinearOpMode {
+@Autonomous(name = "Red Inside", group = "Red")
+
+public class RedInner extends LinearOpMode
+{
+
     private static final String TFOD_MODEL_ASSET = "Skystone.tflite";
     private static final String LABEL_FIRST_ELEMENT = "Stone";
     private static final String LABEL_SECOND_ELEMENT = "Skystone";
@@ -91,53 +95,41 @@ public class RedFull extends LinearOpMode {
      */
     private TFObjectDetector tfod;
 
-    //Wheel Motors
+    Gamepad gamepad1;
+    Gamepad gamepad2;
+
     DcMotor leftFront;
     DcMotor rightFront;
     DcMotor leftBack;
     DcMotor rightBack;
 
-    //Foundation Servos
     Servo leftFoundation;
     Servo rightFoundation;
 
-    //Turret Motor
     DcMotor turret;
 
-    //Lift Motor
     DcMotor lift;
 
-    //Arm Motor
     DcMotor arm;
 
-    //Claw Continuous Rotation Servo
     CRServo leftClaw;
     CRServo rightClaw;
 
     Servo capstone;
 
-    //Gyroscope
     BNO055IMU imu;
 
-    //Robot Classes
     DriveTrain dT;
     Armstrong a;
-
-    //State Machine Class
     RedStates rS;
 
-    //Timer
     ElapsedTime runtime;
 
-    //Stone counter
     int count = 1;
-    //Extra distance for each stone
     int extraTick;
 
-    //Boolean for if the skystone has been found
     boolean skystone = false;
 
-    //The label of the object the program sees
     String label;
 
     @Override
@@ -161,7 +153,6 @@ public class RedFull extends LinearOpMode {
             tfod.activate();
         }
 
-        //Setting variables to the real life components using the configuration on the phone.
         leftFront = hardwareMap.dcMotor.get("leftFront");
         rightFront = hardwareMap.dcMotor.get("rightFront");
         leftBack = hardwareMap.dcMotor.get("leftBack");
@@ -183,12 +174,11 @@ public class RedFull extends LinearOpMode {
 
         imu = hardwareMap.get(BNO055IMU.class, "imu");
 
-        //Setting up the classes to run using the variables above
         dT = new DriveTrain(gamepad1, gamepad2 ,leftFront, rightFront, leftBack, rightBack, leftFoundation, rightFoundation);
         a = new Armstrong(gamepad1, gamepad2,  turret, lift, arm, leftClaw, rightClaw, capstone, imu);
+
         runtime = new ElapsedTime();
 
-        //Set the motors to stop and stay still instead of removing all power and coasting
         leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
 
@@ -205,12 +195,15 @@ public class RedFull extends LinearOpMode {
 
         arm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        //Stops Robot
+        leftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        leftBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
         dT.kill();
         dT.release();
         a.kill();
 
-        //Setting up Red States
         rS = new RedStates(leftFront, rightFront, leftBack, rightBack, leftFoundation, rightFoundation, turret, lift, arm, leftClaw, rightClaw, dT, a, runtime);
 
         /** Wait for the game to begin */
@@ -219,29 +212,17 @@ public class RedFull extends LinearOpMode {
 
         waitForStart();
 
-        //Resets Timer
-        runtime.reset();
+        a.rUp(0.25, 250);
 
-        //If the play button is pressed
+        a.down(0.75, 500);
+
+        dT.forward(0.25, 850);
+
+        dT.left(0.25, 550);
+
         if (opModeIsActive())
         {
 
-            //While the state machine is still running
-            while (rS.getState() != "finished")
-            {
-
-                //Run the state machine method
-                rS.runFull();
-
-                //Telemetry that displays the current state
-                telemetry.addData("State>", rS.getState());
-
-                //Display Telemetry
-                telemetry.update();
-
-            }
-
-            //Loops the program
             while (opModeIsActive())
             {
 
@@ -256,159 +237,95 @@ public class RedFull extends LinearOpMode {
                     if (updatedRecognitions != null)
                     {
 
-                      telemetry.addData("# Object Detected", updatedRecognitions.size());
+                        telemetry.addData("# Object Detected", updatedRecognitions.size());
 
-                      // step through the list of recognitions and display boundary info.
+                        // step through the list of recognitions and display boundary info.
 
-                      int i = 0;
+                        int i = 0;
 
-                      for (Recognition recognition : updatedRecognitions)
-                      {
+                        for (Recognition recognition : updatedRecognitions)
+                        {
 
-                        telemetry.addData(String.format("label (%d)", i), recognition.getLabel());
-                        //Sets the label to the name of the recognition
-                        label = recognition.getLabel();
+                            telemetry.addData(String.format("label (%d)", i), recognition.getLabel());
+                            label = recognition.getLabel();
 
-                        telemetry.addData(String.format("  left,top (%d)", i), "%.03f , %.03f",
-                                recognition.getLeft(), recognition.getTop());
+                            telemetry.addData(String.format("  left,top (%d)", i), "%.03f , %.03f",
+                                    recognition.getLeft(), recognition.getTop());
 
-                        telemetry.addData(String.format("  right,bottom (%d)", i), "%.03f , %.03f",
-                                recognition.getRight(), recognition.getBottom());
+                            telemetry.addData(String.format("  right,bottom (%d)", i), "%.03f , %.03f",
+                                    recognition.getRight(), recognition.getBottom());
+                        }
+
+                        if(label == "Skystone" || count == 3)
+                        {
+
+                            telemetry.addData("Guess What", "Skystone Baby");
+                            skystone = true;
+                            dT.kill();
+                            break;
+
+                        } else if (label == "Stone" && runtime.milliseconds() >= 1000)
+                        {
+
+                            telemetry.addData("Guess What", "Nothing!");
+
+                            count++;
+                            extraTick = extraTick + 380;
+
+                            dT.left(0.25, 380);
+
+                            runtime.reset();
+
+                        } else if (runtime.milliseconds() >= 1500)
+                        {
+
+                            a.rUp(0.25, 50);
+
+                            runtime.reset();
+
+                        }
 
                         telemetry.update();
-                      }
-
-                      //If label equals Skystone or if two stones have been detected
-                      if(label == "Skystone" || count == 3)
-                      {
-
-                          //Telemetry for detecting the Skystone
-                          telemetry.addData("Guess What", "Skystone Baby");
-
-                          //Displays telemetry
-                          telemetry.update();
-
-                          //Sets the Skystone flag to true
-                          skystone = true;
-
-                          //Stops robot
-                          dT.kill();
-
-                          //Exits while loop
-                          break;
-
-                        //If the label detects Stone and the timer has been going for one second
-                      } else if (label == "Stone" && runtime.milliseconds() >= 1000)
-                      {
-
-                          //Telemetry for not seeing a Skystone
-                          telemetry.addData("Guess What", "Nothing!");
-
-                          //Displays Telemetry
-                          telemetry.update();
-
-                          //Adds one to the count number
-                          count++;
-
-                          //Adds to the extra tick distance
-                          extraTick = extraTick + 380;
-
-                          //Moves left to next stone
-                          dT.left(0.25, 380);
-
-                          //Resets timer
-                          runtime.reset();
-
-                        //If the robot times out
-                      } else if (runtime.milliseconds() >= 1500)
-                      {
-
-                          //Rotate arm up to create movement to help detection
-                          a.rUp(0.25, 50);
-
-                          //Resets timer
-                          runtime.reset();
-
-                      }
-
-                      //Displays Telemetry
-                      telemetry.update();
 
                     }
                 }
             }
+
         }
 
-        //If the Skystone has been detected
-        if (skystone == true)
-        {
+        if (skystone == true) {
 
-            //Moves robot forward to the skystone
+            telemetry.addData("Count", count);
+            telemetry.update();
+
             dT.forward(0.25, 350);
 
-            //Grabs Skystone
             leftClaw.setPower(-1);
             rightClaw.setPower(1);
 
-            //Continuous clamp on the skystone
             a.setCIdle(1);
 
-            //Resets Timer
             runtime.reset();
 
-            //Waits a quarter second to clamp
-            while (runtime.milliseconds() < 250);
+            while (runtime.milliseconds() < 250) ;
 
-            //Rotates arm up to a level position
             a.rUp(0.5, 300);
 
-            //Sets idle power
             arm.setPower(0.15);
 
-            //Moves robot back to clear the bridge structure
             dT.backwards(0.3, 350);
 
-            //Moves robot right to the foundation plate
             dT.right(0.25, 3120 + extraTick);
 
-            //Moves forward to the foundation
             dT.forward(0.3, 250);
 
-            //Releases the skystone
             a.unclamp(1, 250);
 
-            //Backs away from the foundation plate
             dT.backwards(0.25, 75);
 
-            //Turns 180 degrees
-            dT.tRight(0.3, 1750);
+            a.tLeft(0.5, 950);
 
-            //Backs into the foundation plate
-            dT.backwards(0.3, 275);
-
-            //Grabs foundation plate
-            dT.grab();
-
-            //Rotates arm out of the way
-            a.tRight(1, 950);
-
-            //Pulls foundation plate to building zone
-            dT.forward(0.5, 1400);
-
-            //Lets go of the foundation plate
-            dT.release();
-
-            //Backwards to avoid wall
-            dT.backwards(0.25, 50);
-
-            //Moves robot right
-            dT.right(0.5, 800);
-
-            //Moves robot behind alliance member
-            dT.backwards(0.3, 950);
-
-            //Moves right to park
-            dT.right(0.3, 800);
+            dT.left(0.25, 1500);
 
         }
 
@@ -440,10 +357,10 @@ public class RedFull extends LinearOpMode {
      */
     private void initTfod() {
         int tfodMonitorViewId = hardwareMap.appContext.getResources().getIdentifier(
-            "tfodMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+                "tfodMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         TFObjectDetector.Parameters tfodParameters = new TFObjectDetector.Parameters(tfodMonitorViewId);
-       tfodParameters.minimumConfidence = 0.8;
-       tfod = ClassFactory.getInstance().createTFObjectDetector(tfodParameters, vuforia);
-       tfod.loadModelFromAsset(TFOD_MODEL_ASSET, LABEL_FIRST_ELEMENT, LABEL_SECOND_ELEMENT);
+        tfodParameters.minimumConfidence = 0.8;
+        tfod = ClassFactory.getInstance().createTFObjectDetector(tfodParameters, vuforia);
+        tfod.loadModelFromAsset(TFOD_MODEL_ASSET, LABEL_FIRST_ELEMENT, LABEL_SECOND_ELEMENT);
     }
 }
