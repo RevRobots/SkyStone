@@ -67,7 +67,7 @@ public class DriveTrain
         {
 
             //Three Quarters Speed
-            dSpd = 1.33333;
+            dSpd = .75;
 
         } else if (gamepad1.a)
         {

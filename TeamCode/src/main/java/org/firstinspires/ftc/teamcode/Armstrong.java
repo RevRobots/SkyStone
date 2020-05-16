@@ -123,7 +123,7 @@ public class Armstrong
             if (!turret.isBusy())
             {
 
-                turret.setPower(gamepad2.right_stick_x);
+                turret.setPower(-gamepad2.right_stick_x/rSpd);
 
             }
 
@@ -168,6 +168,18 @@ public class Armstrong
 
             //Idle
             arm.setPower(0.1);
+
+        }
+
+        if (gamepad2.x)
+        {
+
+            aSpd = 0.5;
+
+        } else if (gamepad2.y)
+        {
+
+            aSpd = 0.75;
 
         }
 
